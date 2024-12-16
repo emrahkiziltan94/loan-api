@@ -1,4 +1,4 @@
-Below is the **comprehensive `README.md`** documentation for the **loan-api** project. This guide covers an overview, technologies used, setup steps, configuration details, deployment process, and additional important aspects such as testing, security, and database structure. Follow this guide to clone, build, and run the application seamlessly.
+This guide covers an overview, technologies used, setup steps, configuration details, deployment process, and additional important aspects such as testing, security, and database structure. Follow this guide to clone, build, and run the application seamlessly.
 
 ---
 
