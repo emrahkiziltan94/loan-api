@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  loan-api:
+    image: your-dockerhub-username/loan-api:latest
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_USERNAME: your_db_user
+      DB_PASSWORD: your_db_password
+      JWT_SECRET_KEY: your_jwt_secret
+    depends_on:
+      - mysql-db
+    networks:
+      - loan-network
+
+  mysql-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: loan_db
+      MYSQL_USER: your_db_user
+      MYSQL_PASSWORD: your_db_password
+      MYSQL_ROOT_PASSWORD: your_root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - loan-network
+
+networks:
+  loan-network:
+
+volumes:
+  mysql-data:
