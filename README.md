@@ -32,8 +32,7 @@ A simple loan management application providing features such as loan creation, l
 16. [Security and Access Control](#security-and-access-control)  
 17. [Loan Listing with Specifications](#loan-listing-with-specifications)  
 18. [Unit Testing Strategy](#unit-testing-strategy)  
-19. [Entity Relationship Diagram (ERD)](#entity-relationship-diagram-erd)  
-20. [Contribution and License](#contribution-and-license)
+19. [Contribution and License](#contribution-and-license)
 
 ---
 
@@ -927,13 +926,6 @@ To ensure the reliability and maintainability of the application, **unit tests**
 
 ---
 
-## **Entity Relationship Diagram (ERD)**
-
-The following is a simplified **Entity Relationship Diagram (ERD)** illustrating the relationships between the main entities in the **loan-api** project.
-
-![ERD](https://i.imgur.com/ERDDiagram.png)
-
-*Alternatively, you can create an ERD using tools like [draw.io](https://draw.io/) and include the image in your repository.*
 
 ### **Entities:**
 
