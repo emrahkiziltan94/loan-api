@@ -12,7 +12,7 @@ import java.awt.Desktop;
 import java.net.URI;
 
 @Component
-@Profile("dev")
+@Profile("test")
 @Slf4j
 public class SwaggerUIOpener implements ApplicationListener<ApplicationReadyEvent> {
 

@@ -298,7 +298,7 @@ server:
 
 spring:
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
+    active: ${SPRING_PROFILES_ACTIVE:test}
   cache:
     type: hazelcast
   datasource:
