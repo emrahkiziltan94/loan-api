@@ -16,6 +16,8 @@ public class InstallmentPaymentLock {
 
     private Long loanId;
 
+    private Long customerId;
+
     @Enumerated(EnumType.STRING)
     private LockStatus status;
 

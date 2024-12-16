@@ -4,6 +4,8 @@ package com.ekiziltan.loan.utils.constants;
 
 public final class LoanServiceConstants {
 
+    public static final String ERROR_ACTIVE_LOCK_EXISTS = "Active loan application lock exists for this customer.";
+
     private LoanServiceConstants() {
         throw new UnsupportedOperationException("Cannot instantiate LoanServiceConstants.");
     }

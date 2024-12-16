@@ -8,6 +8,12 @@ spring:
     driverClassName: org.h2.Driver
     username: sa
     password: ""
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 300000 # 5 minutes
+      connection-timeout: 30000 # 30 seconds
+      max-lifetime: 1800000 # 30 minutes
   jpa:
     hibernate:
       ddl-auto: create-drop

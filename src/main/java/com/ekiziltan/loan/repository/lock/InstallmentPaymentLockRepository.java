@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface InstallmentPaymentLockRepository extends JpaRepository<InstallmentPaymentLock, Long> {
 
     Optional<InstallmentPaymentLock> findByLoanIdAndStatus(Long loanId, LockStatus status);
+
+    Optional<InstallmentPaymentLock> findByCustomerIdAndStatus(Long customerId, LockStatus status);
 }

@@ -9,17 +9,16 @@ import com.ekiziltan.loan.handlers.exceptions.ApiException;
 import com.ekiziltan.loan.repository.CustomerRepository;
 import com.ekiziltan.loan.repository.LoanInstallmentRepository;
 import com.ekiziltan.loan.repository.LoanRepository;
+import com.ekiziltan.loan.service.lock.InstallmentPaymentLockService;
 import com.ekiziltan.loan.service.lock.LoanApplicationLockService;
+import com.ekiziltan.loan.utils.SecurityHelper;
 import com.ekiziltan.loan.utils.constants.LoanServiceConstants;
-import com.ekiziltan.loan.utils.mapper.LoanMapper;
-import com.ekiziltan.loan.validations.LoanValidator;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.http.HttpStatus;
-
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -29,12 +28,18 @@ class LoanCreationServiceImplTest {
 
     @Mock
     private LoanApplicationLockService lockService;
+
+    @Mock
+    private InstallmentPaymentLockService installmentPaymentLockService;
     @Mock
     private CustomerRepository customerRepository;
     @Mock
     private LoanRepository loanRepository;
     @Mock
     private LoanInstallmentRepository installmentRepository;
+
+    @Mock
+    private SecurityHelper securityHelper;
     @InjectMocks
     private LoanCreationServiceImpl loanCreationService;
 
@@ -56,12 +61,15 @@ class LoanCreationServiceImplTest {
         customer.setUsedCreditLimit(BigDecimal.ZERO);
         customer.setCreditLimit(new BigDecimal("10000"));
 
+        doNothing().when(installmentPaymentLockService).checkLockExists(1L);
+
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
         when(loanRepository.save(any(Loan.class))).thenAnswer(invocation -> {
             Loan loan = invocation.getArgument(0);
             loan.setId(123L);
             return loan;
         });
+        when(securityHelper.getCustomerIdFromSecurityContext()).thenReturn(1L);
 
         LoanDTO result = loanCreationService.execute(request);
 
@@ -82,6 +90,8 @@ class LoanCreationServiceImplTest {
         request.setNumberOfInstallment(12);
         request.setInterestRate(0.2);
 
+        doNothing().when(installmentPaymentLockService).checkLockExists(1L);
+        when(securityHelper.getCustomerIdFromSecurityContext()).thenReturn(1L);
         when(customerRepository.findById(2L)).thenReturn(Optional.empty());
 
         ApiException ex = assertThrows(ApiException.class, () -> loanCreationService.execute(request));
@@ -103,6 +113,8 @@ class LoanCreationServiceImplTest {
         customer.setId(3L);
         customer.setUsedCreditLimit(new BigDecimal("5000"));
         customer.setCreditLimit(new BigDecimal("10000"));
+        doNothing().when(installmentPaymentLockService).checkLockExists(1L);
+        when(securityHelper.getCustomerIdFromSecurityContext()).thenReturn(1L);
 
         when(customerRepository.findById(3L)).thenReturn(Optional.of(customer));
 
@@ -121,6 +133,8 @@ class LoanCreationServiceImplTest {
         request.setNumberOfInstallment(12);
         request.setInterestRate(0.2);
 
+        doNothing().when(installmentPaymentLockService).checkLockExists(1L);
+        when(securityHelper.getCustomerIdFromSecurityContext()).thenReturn(1L);
         Customer customer = new Customer();
         customer.setId(4L);
         customer.setUsedCreditLimit(BigDecimal.ZERO);

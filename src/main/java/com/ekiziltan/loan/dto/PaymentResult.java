@@ -12,5 +12,6 @@ import java.util.List;
 public class PaymentResult {
     private int paidCount;
     private BigDecimal totalSpent;
+    private BigDecimal totalPrincipalPaid;
     private List<LoanInstallment> installments;
 }

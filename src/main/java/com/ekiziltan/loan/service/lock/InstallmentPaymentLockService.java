@@ -4,6 +4,7 @@ import com.ekiziltan.loan.entity.InstallmentPaymentLock;
 import com.ekiziltan.loan.entity.LockStatus;
 import com.ekiziltan.loan.handlers.exceptions.ApiException;
 import com.ekiziltan.loan.repository.lock.InstallmentPaymentLockRepository;
+import com.ekiziltan.loan.utils.SecurityHelper;
 import com.ekiziltan.loan.utils.constants.LoanServiceConstants;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 public class InstallmentPaymentLockService {
 
     private final InstallmentPaymentLockRepository installmentPaymentLockRepository;
+    private final SecurityHelper securityHelper;
 
     @Transactional
     public void createLock(Long loanId) {
@@ -28,8 +30,16 @@ public class InstallmentPaymentLockService {
         InstallmentPaymentLock newLock = new InstallmentPaymentLock();
         newLock.setLoanId(loanId);
         newLock.setStatus(LockStatus.IN_PROGRESS);
+        newLock.setCustomerId(securityHelper.getCustomerIdFromSecurityContext());
         newLock.setCreatedDate(LocalDateTime.now());
         installmentPaymentLockRepository.save(newLock);
+    }
+
+    public void checkLockExists(Long customerId) {
+        installmentPaymentLockRepository.findByCustomerIdAndStatus(customerId, LockStatus.IN_PROGRESS)
+                .ifPresent(lock -> {
+                    throw new ApiException(LoanServiceConstants.ERROR_ACTIVE_LOCK_EXISTS, HttpStatus.CONFLICT);
+                });
     }
 
     @Transactional

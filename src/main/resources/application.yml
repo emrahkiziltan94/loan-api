@@ -8,6 +8,18 @@ spring:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   cache:
     type: hazelcast
+  datasource:
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000 # 5 minutes
+      connection-timeout: 30000 # 30 seconds
+      max-lifetime: 1800000 # 30 minutes
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
 
 doc:
   api-docs:

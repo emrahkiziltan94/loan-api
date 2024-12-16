@@ -33,6 +33,13 @@ public class LoanApplicationLockService {
         lockRepository.save(newLock);
     }
 
+    public void checkLockExists(Long customerId) {
+        lockRepository.findByCustomerIdAndStatus(customerId, LockStatus.IN_PROGRESS)
+                .ifPresent(lock -> {
+                    throw new ApiException(LoanServiceConstants.ERROR_ACTIVE_LOCK_EXISTS, HttpStatus.CONFLICT);
+                });
+    }
+
     @Transactional
     public void markLockAsDone(Long customerId) {
         LoanApplicationLock lock = lockRepository.findByCustomerIdAndStatus(customerId, LockStatus.IN_PROGRESS)

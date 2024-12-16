@@ -9,7 +9,9 @@ import com.ekiziltan.loan.handlers.exceptions.ApiException;
 import com.ekiziltan.loan.repository.CustomerRepository;
 import com.ekiziltan.loan.repository.LoanInstallmentRepository;
 import com.ekiziltan.loan.repository.LoanRepository;
+import com.ekiziltan.loan.service.lock.InstallmentPaymentLockService;
 import com.ekiziltan.loan.service.lock.LoanApplicationLockService;
+import com.ekiziltan.loan.utils.SecurityHelper;
 import com.ekiziltan.loan.utils.constants.LoanServiceConstants;
 import com.ekiziltan.loan.utils.mapper.LoanMapper;
 import com.ekiziltan.loan.validations.LoanValidator;
@@ -28,10 +30,12 @@ import java.time.ZoneId;
 @RequiredArgsConstructor
 @Service
 public class LoanCreationServiceImpl implements LoanCreationService {
-    private final LoanApplicationLockService lockService;
+    private final LoanApplicationLockService loanApplicationLockService;
+    private final InstallmentPaymentLockService installmentPaymentLockService;
     private final CustomerRepository customerRepository;
     private final LoanRepository loanRepository;
     private final LoanInstallmentRepository installmentRepository;
+    private final SecurityHelper securityHelper;
 
     @Override
     @PreAuthorize("hasRole('ADMIN')")
@@ -39,7 +43,10 @@ public class LoanCreationServiceImpl implements LoanCreationService {
     @CacheEvict(value = {"loansCache", "installmentsCache"}, allEntries = true)
     public LoanDTO execute(CreateLoanRequest request) {
 
-        lockService.createLock(request.getCustomerId());
+        Long customerId = securityHelper.getCustomerIdFromSecurityContext();
+        installmentPaymentLockService.checkLockExists(customerId);
+
+        loanApplicationLockService.createLock(request.getCustomerId());
 
         try {
 
@@ -51,11 +58,11 @@ public class LoanCreationServiceImpl implements LoanCreationService {
             Loan savedLoan = loanRepository.save(loan);
             updateCustomerCredit(customer, newUsedCredit);
             createLoanInstallments(savedLoan);
-            lockService.markLockAsDone(request.getCustomerId());
+            loanApplicationLockService.markLockAsDone(request.getCustomerId());
             return LoanMapper.entityToDTO(savedLoan);
         } catch (Exception e) {
 
-            lockService.markLockAsFailed(request.getCustomerId());
+            loanApplicationLockService.markLockAsFailed(request.getCustomerId());
             throw e;
         }
     }
